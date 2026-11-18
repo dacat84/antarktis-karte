@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logbuch · Sarah W. Vorwerk · Antarktis 2020</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<meta name="theme-color" content="#f2ecdf">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<link href="../assets/common.css?v=10" rel="stylesheet">
+<style>
+:root{--paper:#f2ecdf;--ink:#1d2b3a;--ink2:#5b6774;--red:#c8372d;--rule:#cdbfa6;--mono:'IBM Plex Mono',ui-monospace,monospace}
+body{background:var(--paper);color:var(--ink);font-family:'Fraunces',Georgia,serif}
+#map{left:0;top:0;bottom:0;right:480px}
+.frame{position:fixed;left:14px;top:14px;bottom:14px;right:494px;border:1.5px solid var(--ink);pointer-events:none;z-index:3}
+.frame:after{content:"";position:absolute;inset:5px;border:.6px solid var(--ink)}
+.cart{position:fixed;left:38px;top:36px;z-index:4;background:rgba(242,236,223,.94);border:1px solid var(--ink);padding:12px 18px 10px;max-width:340px}
+.cart .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--ink2)}
+.cart h1{margin:4px 0 2px;font-size:28px;font-weight:800}
+.cart p{margin:0;font-style:italic;color:var(--ink2);font-size:14px}
+.rose{position:fixed;left:40px;bottom:44px;z-index:4;width:112px;pointer-events:none}
+aside{position:fixed;right:0;top:0;bottom:0;width:480px;display:flex;flex-direction:column;padding:28px 28px 18px;background:var(--paper);border-left:1.5px solid var(--ink);
+  background-image:repeating-linear-gradient(transparent 0 33px,rgba(29,43,58,.08) 33px 34px)}
+.hd{display:flex;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--ink);padding-bottom:8px}
+.hd h2{margin:0;font-size:25px;font-weight:600}
+.hd span{font-family:var(--mono);font-size:12px;color:var(--ink2)}
+.big{display:grid;grid-template-columns:repeat(3,1fr);margin:16px 0 4px;border-bottom:1px solid var(--rule);padding-bottom:12px}
+.big div{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--ink2)}
+.big b{display:block;font-family:'Fraunces';font-size:33px;letter-spacing:0;color:var(--ink);font-weight:600;margin-top:2px}
+.big b small{font-size:14px;color:var(--ink2);font-weight:400}
+.wxl{display:flex;gap:16px;align-items:baseline;font-family:var(--mono);font-size:12.5px;color:var(--ink2);padding:10px 0;border-bottom:1px solid var(--rule)}
+.wxl b{font-family:'Fraunces';font-size:20px;color:var(--ink);font-weight:600}
+.wxl label{margin-left:auto;font-size:10.5px;letter-spacing:.12em;display:flex;gap:6px;align-items:center;cursor:pointer}
+.wxl input{accent-color:var(--red)}
+.logwrap{flex:1;overflow:hidden;position:relative}
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;margin-top:8px}
+th{text-align:left;font-weight:500;font-size:10px;letter-spacing:.12em;color:var(--ink2);border-bottom:1px solid var(--ink);padding:6px 4px}
+td{padding:7px 4px;border-bottom:1px solid rgba(29,43,58,.1);white-space:nowrap}
+tr.now td{background:rgba(200,55,45,.1);color:var(--red);font-weight:500}
+tr.fut{opacity:.28}
+td.hand{font-family:'Fraunces';font-style:italic;font-size:13.5px;white-space:normal;color:var(--ink);padding-left:72px}
+.thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0 0}
+.thumbs button{aspect-ratio:1;border:1px solid var(--ink);background:#e7dfcd}
+.thumbs img{filter:sepia(.25)}
+.thumbs button span{display:none}
+.ctl{display:flex;gap:12px;align-items:center;border-top:2px solid var(--ink);padding-top:14px;margin-top:12px}
+.ctl #play{font-family:var(--mono);background:var(--ink);color:var(--paper);border:0;width:44px;height:36px;font-size:14px;cursor:pointer}
+.ctl #speed{font-family:var(--mono);background:none;border:1px solid var(--ink);color:var(--ink);height:36px;padding:0 10px;cursor:pointer}
+.ctl input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:3px;background:linear-gradient(90deg,var(--red) var(--p,0%),var(--rule) var(--p,0%));outline:none}
+.ctl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--red);cursor:pointer}
+.ctl input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--red);border:0}
+.clk{font-family:var(--mono);font-size:12px;color:var(--ink2);margin-top:8px;display:flex;flex-direction:column;gap:3px}
+.shipm svg{display:block;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25))}
+.shiptag #boatTag{font-family:var(--mono);font-size:12px;background:var(--paper);border:1px solid var(--ink);padding:3px 8px;white-space:nowrap;color:var(--ink)}
+.shiptag #boatTag b{color:var(--red);font-weight:500}
+.stpop .maplibregl-popup-content{background:var(--paper);border:1px solid var(--ink);border-radius:0;font-family:'Fraunces';color:var(--ink)}
+.stpop .mono{font-family:var(--mono);font-size:11.5px;color:var(--ink2)}
+.maplibregl-ctrl-bottom-right{right:26px;bottom:24px}.maplibregl-ctrl-bottom-left{left:170px;bottom:24px}
+.maplibregl-ctrl-group{border-radius:0!important;border:1px solid var(--ink);box-shadow:none!important;background:var(--paper)!important}
+@media (max-width:900px){
+  #map{right:0;bottom:45vh}.frame,.rose{display:none}
+  aside{top:55vh;width:auto;left:0;border-left:0;border-top:1.5px solid var(--ink);padding:14px}
+  .cart{left:10px;top:10px;padding:8px 12px}.cart h1{font-size:20px}.cart p{display:none}
+  .big b{font-size:24px}
+}
+</style>
+</head>
+<body>
+<div id="map"></div><div class="frame"></div>
+<div class="cart"><div class="k">SEGELYACHT · STAHL · 16 M · BJ. 1988</div><h1>Sarah W. Vorwerk</h1><p>Reise von Ushuaia zur Antarktischen Halbinsel und zurück, Februar 2020</p></div>
+<svg class="rose" viewBox="-62 -72 124 134" aria-hidden="true"><circle r="52" fill="none" stroke="#1d2b3a" stroke-width=".8"/><circle r="44" fill="none" stroke="#1d2b3a" stroke-width=".4"/>
+<g fill="#1d2b3a"><path d="M0-56 L6 0 L0 6 L-6 0Z"/><path d="M0 56 L6 0 L-6 0Z" fill="none" stroke="#1d2b3a"/><path d="M56 0 L0 5 L0-5Z" fill="none" stroke="#1d2b3a"/><path d="M-56 0 L0 5 L0-5Z" fill="none" stroke="#1d2b3a"/></g>
+<text y="-58" text-anchor="middle" font-family="Fraunces" font-size="13" font-weight="700" fill="#c8372d">N</text></svg>
+
+<aside>
+  <div class="hd"><h2>Schiffstagebuch</h2><span id="pg">Blatt 1</span></div>
+  <div class="big"><div>ETMAL<b><span id="etm">–</span><small> sm</small></b></div><div>FAHRT<b><span id="sSog">–</span><small> kn</small></b></div><div>GESAMT<b><span id="pDone">–</span></b></div></div>
+  <div class="wxl"><span class="wx" id="wx"><b id="wTemp">–</b> · Wind <span id="wDir"></span> <span id="wWind">–</span> kn · <span id="wPres">–</span> hPa <span id="wTrend"></span></span>
+    <label>WETTER <input type="checkbox" id="wxToggle" checked></label></div>
+  <div class="logwrap"><table><thead><tr><th>ZEIT</th><th>BREITE</th><th>LÄNGE</th><th>KURS</th><th>FAHRT</th><th>WIND</th><th>BARO</th></tr></thead><tbody id="rows"></tbody></table></div>
+  <div class="thumbs" id="thumbs"></div>
+  <div class="ctl"><button id="play" aria-label="Abspielen">▶</button><input type="range" id="slider" min="0" max="1000" value="0"><button id="speed">0,5×</button></div>
+  <div class="clk"><span id="clock"></span><span><span id="nextLab"></span>: <span id="nName"></span></span></div>
+</aside>
+
+<div id="lb" class="lb" hidden>
+  <button class="lb-x" id="lbX" aria-label="Schließen">×</button>
+  <button class="lb-nav l" id="lbP" aria-label="Vorheriges">‹</button>
+  <figure><img id="lbImg" alt=""><figcaption><b id="lbT"></b> <span id="lbM"></span></figcaption></figure>
+  <button class="lb-nav r" id="lbN" aria-label="Nächstes">›</button>
+</div>
+
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const SHIP = '<svg width="20" height="50" viewBox="0 0 20 50"><path d="M10 1 Q18 14 18 30 L17 47 Q10 49 3 47 L2 30 Q2 14 10 1Z" fill="#f7f3ea" stroke="#c8372d" stroke-width="2"/><circle cx="10" cy="20" r="2" fill="#1d2b3a"/><rect x="6" y="31" width="8" height="9" fill="none" stroke="#1d2b3a" stroke-width="1"/></svg>';
+  let SER = null, lastWatch = null;
+  const H4 = 4 * 3600;
+
+  function graticule() {
+    const f = [];
+    for (let la = -67; la <= -53; la += 0.5) f.push({ type: 'Feature', geometry: { type: 'LineString', coordinates: [[-75, la], [-55, la]] } });
+    for (let lo = -75; lo <= -55; lo += 1) f.push({ type: 'Feature', geometry: { type: 'LineString', coordinates: [[lo, -68], [lo, -52]] } });
+    return { type: 'FeatureCollection', features: f };
+  }
+
+  window.THEME = {
+    base: '../',
+    zoom: 8.2,
+    sources: {
+      ocean: { type: 'raster', tileSize: 256, maxzoom: 10, tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}'], attribution: 'Karte: Esri, GEBCO, NOAA · Wetter: Open-Meteo (ERA5)' },
+      grat: { type: 'geojson', data: graticule() }
+    },
+    layers: [
+      { id: 'bg', type: 'background', paint: { 'background-color': '#efe6d2' } },
+      { id: 'ocean', type: 'raster', source: 'ocean', paint: { 'raster-saturation': -0.85, 'raster-opacity': 0.62, 'raster-contrast': 0.15 } },
+      { id: 'grat', type: 'line', source: 'grat', paint: { 'line-color': '#1d2b3a', 'line-width': .6, 'line-opacity': .3 } }
+    ],
+    colors: { done: '#c8372d', doneW: 2.8, todo: '#1d2b3a', todoW: 1.3, todoDash: [0.6, 3], haloOp: 0,
+      label: '#1d2b3a', labelHalo: 'rgba(242,236,223,.95)', labelFont: ['Open Sans Italic'], labelSize: 13.5,
+      photo: '#f7f3ea', photoStroke: '#1d2b3a', anchorBg: '#f7f3ea', anchorFg: '#1d2b3a', port: '#1d2b3a', portStroke: '#f7f3ea' },
+    ship: { html: SHIP, mode: 'rotate', anchor: 'center' },
+    tagOffset: [20, -16],
+    thumbCount: 4,
+    tagHtml(A, o) { return 'Tag ' + o.day + ' · <b>' + A.fmt(o.sog, 1) + ' kn</b>'; },
+    onReady(A) { A.series().then((s) => { SER = s; lastWatch = null; A.refresh(); }); },
+    onRender(A, s) {
+      const back = A.posAt(s.t - 86400);
+      $('etm').textContent = A.fmt(s.p.d - back.d);
+      $('pg').textContent = 'Blatt ' + s.day + ' · ' + A.fmtDate(s.ms);
+      // Wachen à 4 Stunden (Ortszeit 00, 04, 08 …)
+      const off = -A.LOCAL_OFFSET_H * 3600;
+      const tLocal = s.t + (A.t0 / 1000) - off;
+      const w0 = Math.floor(tLocal / H4) * H4 + off - A.t0 / 1000;
+      const key = w0 + '|' + (SER ? 1 : 0);
+      if (key === lastWatch && !s.force) {
+        return;
+      }
+      lastWatch = key;
+      const rows = [];
+      for (let k = -6; k <= 2; k++) rows.push({ type: 'w', t: w0 + k * H4, now: k === 0, fut: k > 0 });
+      const lo = w0 - 6 * H4, hi = w0 + 3 * H4;
+      A.stations.forEach((st, j) => {
+        if (st.type === 'port') {
+          if (st.a >= lo && st.a < hi) rows.push({ type: 'e', t: st.a, txt: j === 0 ? 'Leinen los in Ushuaia' : 'Fest in Ushuaia. Reiseende.' });
+          return;
+        }
+        if (st.a >= lo && st.a < hi) rows.push({ type: 'e', t: st.a, txt: 'Anker fällt, ' + st.name });
+        if (st.b >= lo && st.b < hi) rows.push({ type: 'e', t: st.b, txt: 'Anker auf, ' + st.name });
+      });
+      rows.sort((a, b) => a.t - b.t || (a.type === 'w' ? -1 : 1));
+      $('rows').innerHTML = rows.map((r) => {
+        const fut = r.t > s.t + 60 && !r.now;
+        if (r.type === 'e') return '<tr class="' + (fut ? 'fut' : '') + '"><td colspan="7" class="hand">' + A.fmtTime(A.t0 + r.t * 1000) + ' · ' + r.txt + '</td></tr>';
+        const p = A.posAt(r.t), m = A.motionAt(r.t), ms = A.t0 + r.t * 1000;
+        const w = SER && SER.at(ms);
+        return '<tr class="' + (r.now ? 'now' : fut ? 'fut' : '') + '"><td>' + A.fmtDate(ms, false).replace(' Feb.', '02.') + ' ' + A.fmtTime(ms) + '</td><td>' + A.fmt(-p.lat, 2) + '°S</td><td>' + A.fmt(-p.lon, 2) + '°W</td><td>' +
+          (m.anchored ? '–' : String(Math.round(m.cog)).padStart(3, '0') + '°') + '</td><td>' + A.fmt(m.sog, 1) + '</td><td>' + (w ? A.compass(w.dir) + ' ' + A.beaufort(w.wind) : '·') + '</td><td>' + (w ? Math.round(w.pres) : '·') + '</td></tr>';
+      }).join('');
+    }
+  };
+})();
+</script>
+<script src="../assets/core.js?v=13"></script>
+<script src="../assets/switcher.js?v=10"></script>
+</body>
+</html>

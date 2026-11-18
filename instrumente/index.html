@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Instrumente · Sarah W. Vorwerk · Antarktis 2020</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<meta name="theme-color" content="#07090b">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<link href="../assets/common.css?v=10" rel="stylesheet">
+<style>
+:root{--bg:#07090b;--panel:#0d1114;--line:#1e262c;--amber:#ffb238;--txt:#e6edf2;--mut:#6f7d87;--red:#ff4d3d;--cyan:#57d3e6;--mono:'Share Tech Mono',ui-monospace,monospace}
+body{background:var(--bg);color:var(--txt);font-family:'Barlow Condensed',sans-serif;overflow:hidden}
+#map{left:0;right:0;top:0;bottom:250px}
+.top{position:fixed;left:22px;top:16px;z-index:3;display:flex;flex-direction:column;gap:6px;pointer-events:none}.top .row{display:flex;gap:10px;align-items:center}
+.top .name{font-size:28px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-shadow:0 1px 6px #000}
+.top .tagd{font-family:var(--mono);font-size:13px;color:var(--bg);background:var(--amber);padding:3px 9px;border-radius:3px}
+.top .sub{font-family:var(--mono);font-size:12.5px;color:#9aa7b0;text-shadow:0 1px 4px #000}
+.stat{position:fixed;right:22px;top:62px;z-index:3;display:flex;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.stat div{background:rgba(13,17,20,.92);padding:7px 14px;min-width:96px}
+.stat i{display:block;font-style:normal;font-size:11.5px;letter-spacing:.18em;color:var(--mut)}
+.stat b{font-family:var(--mono);font-size:21px;font-weight:400}
+.side{position:fixed;left:22px;top:100px;z-index:3;width:250px;background:rgba(13,17,20,.92);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.side .l{font-size:11.5px;letter-spacing:.18em;color:var(--mut);margin-bottom:6px;display:flex;justify-content:space-between}
+.side .nx{font-size:18px;font-weight:600;margin-bottom:10px}
+.side .nx small{font-family:var(--mono);font-size:12px;color:var(--amber);font-weight:400;display:block}
+.thumbs{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.thumbs button{aspect-ratio:4/3;border-radius:3px;background:#151b20}
+.thumbs button span{position:absolute;left:0;right:0;bottom:0;padding:10px 5px 3px;font:11px var(--mono);background:linear-gradient(transparent,rgba(0,0,0,.75))}
+.ctl{position:fixed;left:22px;bottom:266px;z-index:3;display:flex;gap:10px;align-items:center;background:rgba(13,17,20,.92);border:1px solid var(--line);padding:7px 10px;border-radius:6px}
+.ctl #play{background:var(--amber);border:0;width:36px;height:30px;border-radius:4px;font-size:13px;cursor:pointer}
+.ctl #speed{background:none;border:1px solid var(--line);color:var(--txt);border-radius:4px;height:30px;padding:0 9px;font:14px var(--mono);cursor:pointer}
+.ctl #clock{font-family:var(--mono);font-size:14px}
+.dash{position:fixed;left:0;right:0;bottom:0;height:250px;background:var(--panel);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,minmax(150px,200px)) 1fr;z-index:3}
+.inst{border-right:1px solid var(--line);display:flex;align-items:center;justify-content:center;position:relative}
+.inst .l{position:absolute;top:10px;left:12px;font-size:12.5px;letter-spacing:.2em;color:var(--mut)}
+.inst svg{width:172px;height:172px}
+.inst label{position:absolute;top:8px;right:10px;font-size:10px;letter-spacing:.12em;color:var(--mut);display:flex;gap:4px;align-items:center;cursor:pointer}
+.inst input{accent-color:var(--amber)}
+.dig{font-family:var(--mono);fill:var(--txt)}
+.baro{padding:12px 20px 10px;position:relative;cursor:crosshair;min-width:0}
+.baro .l{font-size:12.5px;letter-spacing:.2em;color:var(--mut)}
+.baro .v{position:absolute;right:20px;top:6px;font-family:var(--mono);font-size:28px;color:var(--amber)}
+.baro .v small{font-size:13px;color:var(--mut)}
+.baro svg{width:100%;height:186px;margin-top:8px;display:block}
+.shiptag #boatTag{font-family:var(--mono);font-size:12px;color:var(--amber);white-space:nowrap;text-shadow:0 0 4px #000,0 0 2px #000}
+.shiptag #boatTag b{color:var(--bg);background:var(--amber);padding:1px 6px;border-radius:2px;font-weight:400;margin-right:6px;text-shadow:none}
+.shipm svg{display:block;filter:drop-shadow(0 0 6px rgba(255,77,61,.7))}
+.stpop .maplibregl-popup-content{background:#0d1114;color:var(--txt);border:1px solid var(--line);font-family:'Barlow Condensed';font-size:15px}
+.stpop .maplibregl-popup-tip{border-top-color:#0d1114!important;border-bottom-color:#0d1114!important}
+.stpop .mono{font-family:var(--mono);font-size:12px;color:var(--mut)}
+.maplibregl-ctrl-bottom-right,.maplibregl-ctrl-bottom-left{bottom:252px}
+.maplibregl-ctrl-group{background:#0d1114!important;border:1px solid var(--line)}
+.maplibregl-ctrl-group button+button{border-top-color:var(--line)!important}
+.maplibregl-ctrl-group button .maplibregl-ctrl-icon{filter:invert(1)}
+.maplibregl-ctrl-attrib{background:rgba(13,17,20,.85)!important;color:#9aa7b0}.maplibregl-ctrl-attrib a{color:#9aa7b0!important}.maplibregl-ctrl-attrib-button{filter:invert(1)}
+.maplibregl-ctrl-scale{background:rgba(13,17,20,.8);color:var(--txt);border-color:var(--mut)}
+@media (max-width:900px){
+  #map{bottom:330px}.dash{height:330px;grid-template-columns:1fr 1fr}.baro{grid-column:1/3}.inst{display:none}.inst.keep{display:flex}
+  .inst svg{width:120px;height:120px}.side{display:none}.stat{top:auto;bottom:340px;right:10px}.ctl{bottom:396px;left:10px}
+  .maplibregl-ctrl-bottom-right,.maplibregl-ctrl-bottom-left{bottom:332px}
+}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div class="top"><div class="name">Sarah W. Vorwerk</div><div class="row"><div class="tagd">TAG <span id="sDay">1</span></div><div class="sub">USHUAIA ⇄ ANTARKTIS · FEB 2020</div></div></div>
+<div class="stat"><div><i>LOG</i><b id="pDone">–</b></div><div><i>REST</i><b><span id="sLeft">–</span> sm</b></div><div><i>LUFT</i><b id="wTemp">–</b></div></div>
+<div class="side">
+  <div class="l"><span id="nextLab">NÄCHSTER ANKERPLATZ</span></div>
+  <div class="nx"><span id="nName">–</span><small id="nDist"></small></div>
+  <div class="l"><span>FOTOS</span></div>
+  <div class="thumbs" id="thumbs"></div>
+</div>
+<div class="ctl"><button id="play" aria-label="Abspielen">▶</button><button id="speed">0,5×</button><span id="clock"></span></div>
+<div class="dash">
+  <div class="inst keep"><div class="l">WIND</div><label>ERA5 <input type="checkbox" id="wxToggle" checked></label><svg id="gWind" viewBox="-100 -100 200 200"></svg></div>
+  <div class="inst"><div class="l">KURS</div><svg id="gCog" viewBox="-100 -100 200 200"></svg></div>
+  <div class="inst keep"><div class="l">FAHRT</div><svg id="gSog" viewBox="-100 -100 200 200"></svg></div>
+  <div class="inst"><div class="l">ETMAL</div><svg id="gEtm" viewBox="-100 -100 200 200"></svg></div>
+  <div class="baro" id="baroBox"><div class="l">BAROGRAPH · LUFTDRUCK UND WIND · 25 TAGE</div><div class="v"><span id="bV">–</span> <small>hPa <span id="wTrend"></span></small></div><svg id="baro" viewBox="0 0 1000 186" preserveAspectRatio="none"></svg></div>
+</div>
+
+<div id="lb" class="lb" hidden>
+  <button class="lb-x" id="lbX" aria-label="Schließen">×</button>
+  <button class="lb-nav l" id="lbP" aria-label="Vorheriges">‹</button>
+  <figure><img id="lbImg" alt=""><figcaption><b id="lbT"></b> <span id="lbM"></span></figcaption></figure>
+  <button class="lb-nav r" id="lbN" aria-label="Nächstes">›</button>
+</div>
+
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const SHIP = '<svg width="28" height="28" viewBox="-14 -14 28 28"><path d="M0-12 L7 9 L0 4 L-7 9Z" fill="#ff4d3d" stroke="#fff" stroke-width="1.3" stroke-linejoin="round"/></svg>';
+  const ring = '<circle r="92" fill="none" stroke="#1e262c" stroke-width="2"/>';
+  const ticks = (n, long) => { let s = ''; for (let k = 0; k < n; k++) { const L = k % long ? 6 : 12; s += '<line x1="0" y1="-92" x2="0" y2="' + (-92 + L) + '" stroke="#6f7d87" stroke-width="' + (k % long ? 1 : 2) + '" transform="rotate(' + (k * 360 / n) + ')"/>'; } return s; };
+  const arc = (a0, a1, r) => { const p = (a) => [Math.sin(a * Math.PI / 180) * r, -Math.cos(a * Math.PI / 180) * r]; const [x0, y0] = p(a0), [x1, y1] = p(a1); return 'M' + x0.toFixed(1) + ' ' + y0.toFixed(1) + ' A' + r + ' ' + r + ' 0 ' + (a1 - a0 > 180 ? 1 : 0) + ' 1 ' + x1.toFixed(1) + ' ' + y1.toFixed(1); };
+  const sub = (txt) => '<text y="46" text-anchor="middle" fill="#6f7d87" font-size="15" font-family="Barlow Condensed" letter-spacing="3">' + txt + '</text>';
+  let SER = null, baroScale = null, lastCogR = -1;
+
+  function gauge(id, val, max, big, unit) {
+    const v = Math.max(0, Math.min(max, val));
+    $(id).innerHTML = ring + '<path d="' + arc(-130, 130, 78) + '" stroke="#1e262c" stroke-width="10" fill="none"/>' +
+      (v > 0.01 ? '<path d="' + arc(-130, -130 + 260 * v / max, 78) + '" stroke="#ffb238" stroke-width="10" fill="none" stroke-linecap="round"/>' : '') +
+      '<text class="dig" y="18" text-anchor="middle" font-size="52">' + big + '</text>' + sub(unit);
+  }
+  function drawWind(A, w) {
+    if (!w) { $('gWind').innerHTML = ring + ticks(36, 3) + '<text class="dig" y="14" text-anchor="middle" font-size="30">–</text>'; return; }
+    $('gWind').innerHTML = ring + ticks(36, 3) +
+      '<g transform="rotate(' + w.dir + ')"><path d="M0-62 L10-88 L-10-88Z" fill="#57d3e6"/></g>' +
+      '<text class="dig" y="18" text-anchor="middle" font-size="48">' + Math.round(w.wind) + '</text>' + sub('KN · ' + A.compass(w.dir) + ' · ' + w.bft + ' BFT');
+  }
+  function drawBaro(A) {
+    const svg = $('baro'); if (!SER || !SER.time.length) return;
+    const t0 = A.t0, t1 = A.t0 + A.tEnd * 1000;
+    const pmin = Math.floor(Math.min(...SER.pres) / 5) * 5 - 2, pmax = Math.ceil(Math.max(...SER.pres) / 5) * 5 + 2;
+    const wmax = 50;
+    const X = (ms) => (ms - t0) / (t1 - t0) * 1000, Y = (p) => 170 - (p - pmin) / (pmax - pmin) * 160, YW = (w) => 170 - w / wmax * 70;
+    baroScale = { X, t0, t1 };
+    let g = '';
+    for (let d = 0; d <= 25; d++) { const x = X(Date.UTC(2020, 1, 3 + d, 3)); g += '<line x1="' + x.toFixed(1) + '" y1="0" x2="' + x.toFixed(1) + '" y2="170" stroke="#1e262c"/>' + (d % 3 === 0 ? '<text x="' + (x + 3).toFixed(1) + '" y="184" fill="#6f7d87" font-size="12" font-family="Share Tech Mono">' + (3 + d) + '.02.</text>' : ''); }
+    for (let p = Math.ceil(pmin / 10) * 10; p <= pmax; p += 10) g += '<line x1="0" y1="' + Y(p).toFixed(1) + '" x2="1000" y2="' + Y(p).toFixed(1) + '" stroke="#1e262c" stroke-dasharray="3 4"/><text x="4" y="' + (Y(p) - 3).toFixed(1) + '" fill="#6f7d87" font-size="12" font-family="Share Tech Mono">' + p + '</text>';
+    let wp = 'M0 170', pp = '';
+    SER.time.forEach((ms, i) => { if (ms < t0 || ms > t1) return; wp += ' L' + X(ms).toFixed(1) + ' ' + YW(SER.wind[i]).toFixed(1); pp += (pp ? ' L' : 'M') + X(ms).toFixed(1) + ' ' + Y(SER.pres[i]).toFixed(1); });
+    wp += ' L1000 170Z';
+    svg.innerHTML = g + '<path d="' + wp + '" fill="rgba(87,211,230,.13)" stroke="rgba(87,211,230,.45)" stroke-width="1"/>' +
+      '<path id="pAll" d="' + pp + '" fill="none" stroke="#3a4650" stroke-width="2"/>' +
+      '<clipPath id="cp"><rect id="cpR" x="0" y="0" width="0" height="186"/></clipPath><path d="' + pp + '" fill="none" stroke="#ffb238" stroke-width="2.4" clip-path="url(#cp)"/>' +
+      '<line id="cur" x1="0" y1="0" x2="0" y2="172" stroke="#ff4d3d" stroke-width="2"/>';
+  }
+
+  window.THEME = {
+    base: '../',
+    zoom: 8,
+    sources: {
+      dark: { type: 'raster', tileSize: 256, maxzoom: 10, tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'], attribution: 'Karte: Esri, HERE, Garmin · Wetter: Open-Meteo (ERA5)' }
+    },
+    layers: [
+      { id: 'bg', type: 'background', paint: { 'background-color': '#111' } },
+      { id: 'dark', type: 'raster', source: 'dark', paint: { 'raster-brightness-max': 0.85, 'raster-contrast': 0.15 } }
+    ],
+    colors: { done: '#ffb238', doneW: 2.6, doneGlow: true, todo: '#57d3e6', todoW: 1.1, todoDash: [3, 3], todoOp: .5, haloOp: 0,
+      label: '#57d3e6', labelHalo: 'rgba(0,0,0,.8)', labelFont: ['Open Sans Semibold'], labelSize: 12.5, labelSpacing: 0.08,
+      photo: '#07090b', photoStroke: '#ffb238', anchorBg: '#07090b', anchorFg: '#57d3e6', port: '#ff4d3d', portStroke: '#07090b' },
+    ship: { html: SHIP, mode: 'rotate', anchor: 'center' },
+    tagOffset: [18, 0],
+    thumbCount: 4,
+    tagHtml(A, o) { const p = A.posAt(A.t); return '<b>TAG ' + o.day + '</b>' + A.fmt(-p.lat, 3) + '°S ' + A.fmt(-p.lon, 3) + '°W'; },
+    onReady(A) {
+      drawWind(A, null);
+      A.series().then((s) => { SER = s; drawBaro(A); A.refresh(); });
+      $('baroBox').onclick = (e) => {
+        if (!baroScale) return; const r = $('baro').getBoundingClientRect();
+        const ms = baroScale.t0 + (e.clientX - r.left) / r.width * (baroScale.t1 - baroScale.t0);
+        A.setT((ms - A.t0) / 1000);
+      };
+    },
+    onWx(A, w) { drawWind(A, w); },
+    onRender(A, s) {
+      const r = Math.round(s.m.cog);
+      if (r !== lastCogR || s.force) {
+        lastCogR = r;
+        let card = ''; ['N', 'O', 'S', 'W'].forEach((c, k) => card += '<text x="0" y="-62" text-anchor="middle" fill="' + (c === 'N' ? '#ff4d3d' : '#e6edf2') + '" font-size="18" font-weight="700" font-family="Barlow Condensed" transform="rotate(' + (k * 90 - r) + ')">' + c + '</text>');
+        $('gCog').innerHTML = ring + '<g transform="rotate(' + (-r) + ')">' + ticks(72, 6) + '</g>' + card + '<path d="M0-97 L7-85 L-7-85Z" fill="#ffb238"/><text class="dig" y="18" text-anchor="middle" font-size="46">' + (s.m.anchored ? '---' : String(r).padStart(3, '0') + '°') + '</text>' + sub(s.m.anchored ? 'VOR ANKER' : A.compass(r));
+      }
+      gauge('gSog', s.m.sog, 10, A.fmt(s.m.sog, 1), 'KNOTEN');
+      const etm = s.p.d - A.posAt(s.t - 86400).d;
+      gauge('gEtm', etm, 200, A.fmt(etm), 'SM / 24 H');
+      if (baroScale) {
+        const x = baroScale.X(s.ms);
+        const c = $('cur'); if (c) { c.setAttribute('x1', x); c.setAttribute('x2', x); }
+        const cp = $('cpR'); if (cp) cp.setAttribute('width', x);
+        const w = SER && SER.at(s.ms); $('bV').textContent = w ? A.fmt(w.pres) : '–';
+      }
+    }
+  };
+})();
+</script>
+<script src="../assets/core.js?v=13"></script>
+<script src="../assets/switcher.js?v=10"></script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sarah W. Vorwerk · Antarktis 2020</title>
+<meta name="description" content="Die Antarktis-Reise der Sarah W. Vorwerk, Ushuaia – Antarktische Halbinsel – Ushuaia, Februar 2020: GPS-Track, Wetter und Fotos.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="theme-color" content="#0b0f12">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
+<link href="assets/common.css?v=10" rel="stylesheet">
+<style>
+body{background:#0b0f12;color:#fff;font-family:'Inter',system-ui,sans-serif;overflow:hidden}
+#map{inset:0}
+.shade{position:fixed;inset:0;pointer-events:none;z-index:1;background:linear-gradient(180deg,rgba(5,9,12,.7) 0%,rgba(5,9,12,0) 30%,rgba(5,9,12,0) 52%,rgba(5,9,12,.88) 100%)}
+.head{position:fixed;left:44px;top:34px;z-index:2;max-width:620px;pointer-events:none}
+.head .k{font-size:12.5px;letter-spacing:.3em;text-transform:uppercase;color:#ffd2c4}
+.head h1{font-family:'Playfair Display',Georgia,serif;font-weight:900;font-size:64px;line-height:.98;margin:12px 0 10px;text-shadow:0 2px 20px rgba(0,0,0,.35)}
+.head p{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:20px;margin:0;color:#e9eef1;max-width:520px;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.head .ship-name{font-size:12.5px;letter-spacing:.3em;text-transform:uppercase;color:#cfd8de;margin-top:16px}
+.card{position:fixed;right:36px;top:64px;z-index:2;width:290px;background:rgba(255,255,255,.95);color:#14202a;border-radius:4px;padding:14px 20px 10px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.card .w{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.card .w .t{font-family:'Playfair Display';font-size:46px;font-weight:700;line-height:1}
+.card .w .d{font-size:13px;color:#56636d;line-height:1.45}
+.card .w .d b{color:#14202a;font-weight:600}
+.card .r{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid #e4e8eb;font-size:14px}
+.card .r span:first-child{color:#56636d}.card .r b{font-weight:600;text-align:right}
+.card .src{font-size:11px;color:#8a959d;margin-top:6px}.card .src a{color:inherit}
+.card .wxsw{display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8a959d;margin-bottom:8px}
+.card .wxsw input{accent-color:#e0452f}
+.bottom{position:fixed;left:0;right:0;bottom:0;z-index:2;padding:0 44px 22px}
+.ctl{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.ctl #play{width:48px;height:48px;border-radius:50%;border:0;background:#e0452f;color:#fff;font-size:16px;cursor:pointer;box-shadow:0 4px 14px rgba(224,69,47,.4);flex:none}
+.ctl #speed{border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.25);color:#fff;border-radius:16px;padding:6px 11px;font:500 13px Inter,sans-serif;cursor:pointer}
+.ctl #clock{font-size:14px;color:#e9eef1}
+.ctl .stats{margin-left:auto;display:flex;gap:26px;font-size:13px;color:#aeb9c1}
+.ctl .stats b{color:#fff;font-weight:600;font-size:15px;margin-left:6px}
+.chap{display:flex;gap:4px;margin-bottom:10px}
+.chap button{all:unset;cursor:pointer;flex:1;min-width:0}
+.chap .bar{height:3px;background:rgba(255,255,255,.22);border-radius:2px;overflow:hidden}
+.chap .bar i{display:block;height:100%;width:0;background:#e0452f}
+.chap .n{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:#aeb9c1;margin-top:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chap button.on .n{color:#fff}
+.chap button:hover .n{color:#ffd2c4}
+.strip{display:flex;gap:6px;height:104px;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent)}
+.strip::-webkit-scrollbar{display:none}
+.strip button{all:unset;cursor:pointer;flex:none;height:104px;position:relative}
+.strip img{height:104px;width:auto;min-width:60px;border-radius:3px;opacity:.5;transition:opacity .25s;display:block;background:#1b2730}
+.strip button.past img{opacity:.85}
+.strip button.on img{opacity:1;outline:3px solid #e0452f;outline-offset:-3px}
+.strip button:hover img{opacity:1}
+.shiptag #boatTag{background:rgba(255,255,255,.95);color:#14202a;font:500 13px Inter,sans-serif;padding:5px 11px;border-radius:14px;white-space:nowrap;box-shadow:0 2px 10px rgba(0,0,0,.35)}
+.shiptag .day{display:inline-block;background:#e0452f;color:#fff;font-weight:600;border-radius:10px;padding:1px 8px;margin:-2px 8px -2px -6px}
+.shiptag b{font-weight:600}
+.shipm svg{filter:drop-shadow(0 3px 5px rgba(0,0,0,.6));display:block}
+.stpop .maplibregl-popup-content{font-family:Inter,sans-serif;color:#14202a;border-radius:4px;padding:10px 14px}
+.stpop .mono{font-size:12px;color:#56636d}
+.maplibregl-ctrl-bottom-right,.maplibregl-ctrl-bottom-left{bottom:236px}
+.maplibregl-ctrl-bottom-right{right:30px}.maplibregl-ctrl-bottom-left{left:36px}
+@media (max-width:860px){
+  .head{left:16px;top:58px;right:16px}.head h1{font-size:36px}.head p{font-size:16px}
+  .card{display:none}
+  .bottom{padding:0 14px 54px}.ctl .stats{display:none}
+  .chap .n{display:none}.strip{height:70px}.strip button,.strip img{height:70px}
+  .maplibregl-ctrl-bottom-right,.maplibregl-ctrl-bottom-left{bottom:190px}
+}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div class="shade"></div>
+
+<header class="head">
+  <div class="k" id="chK">Kapitel 1</div>
+  <h1 id="chT">Sarah W. Vorwerk</h1>
+  <p id="chS"></p>
+  <div class="ship-name">Sarah W. Vorwerk · Antarktis 2020</div>
+</header>
+
+<aside class="card">
+  <div class="wxsw"><span>Wetter an Bord</span><label title="Historische Wetterdaten (ERA5) ein/aus"><input type="checkbox" id="wxToggle" checked></label></div>
+  <div class="wx" id="wx">
+    <div class="w"><div class="t" id="wTemp">–</div><div class="d"><span id="wBft">–</span><br>Böen <b id="wGust">–</b> kn · <b id="wPres">–</b> hPa <span id="wTrend"></span></div></div>
+  </div>
+  <div class="r"><span>Position</span><b id="sPos">–</b></div>
+  <div class="r"><span>Fahrt</span><b><span id="sSog">–</span> kn</b></div>
+  <div class="r"><span>Gesegelt</span><b id="pDone">–</b></div>
+  <div class="r"><span id="nextLab">Nächster Ankerplatz</span><b id="nName">–</b></div>
+  <div class="src">Wetter: ERA5 via <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></div>
+</aside>
+
+<section class="bottom">
+  <div class="ctl">
+    <button id="play" aria-label="Abspielen">▶</button>
+    <button id="speed" title="Geschwindigkeit">0,5×</button>
+    <span id="clock"></span>
+    <div class="stats"><span>Tag<b id="sDay">1</b></span><span>bis Ushuaia<b><span id="sLeft">–</span> sm</b></span><span>gesamt<b id="pTot">–</b></span></div>
+  </div>
+  <div class="chap" id="chap"></div>
+  <div class="strip" id="strip"></div>
+</section>
+
+<div id="lb" class="lb" hidden>
+  <button class="lb-x" id="lbX" aria-label="Schließen">×</button>
+  <button class="lb-nav l" id="lbP" aria-label="Vorheriges">‹</button>
+  <figure><img id="lbImg" alt=""><figcaption><b id="lbT"></b> <span id="lbM"></span></figcaption></figure>
+  <button class="lb-nav r" id="lbN" aria-label="Nächstes">›</button>
+</div>
+
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="assets/chapters.js?v=10"></script>
+<script>
+(function () {
+  const CHAPTERS = window.CHAPTERS;
+  const SHIP = '<div class="flip"><svg viewBox="0 0 72 60" width="62" height="52"><path d="M36 4 L36 46" stroke="#fff" stroke-width="1.6"/><path d="M34.5 7 L34.5 43 L14 43 Z" fill="#fff" stroke="#16222c" stroke-width="1"/><path d="M37.5 6 L37.5 42 L62 44 Z" fill="#eef1f3" stroke="#16222c" stroke-width="1"/><path d="M24 41 h9 v-3 h6 v3 h2" fill="#fff" stroke="#16222c" stroke-width="1"/><path d="M4 45 L68 45 L64 52 Q60 56 54 56 L10 56 Q6 55 5 52 Z" fill="#d8332a" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 50 H60" stroke="#fff" stroke-width=".9" opacity=".8"/></svg></div>';
+  let chIdx = -1, lastStripK = -2, chBounds = [];
+  const $ = (id) => document.getElementById(id);
+
+  window.THEME = {
+    zoom: 8.6,
+    sources: {
+      img: { type: 'raster', tileSize: 256, maxzoom: 13, tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'], attribution: 'Bilder: Esri, Maxar, Earthstar Geographics · Wetter: Open-Meteo (ERA5)' }
+    },
+    layers: [
+      { id: 'bg', type: 'background', paint: { 'background-color': '#0d2433' } },
+      { id: 'img', type: 'raster', source: 'img', paint: { 'raster-brightness-max': 0.92, 'raster-saturation': -0.1 } }
+    ],
+    colors: { done: '#ff5a3c', doneW: 4, doneGlow: true, todo: '#ffffff', todoW: 1.5, todoDash: [2, 3], todoOp: .7, haloOp: 0,
+      label: '#ffffff', labelHalo: 'rgba(0,0,0,.6)', labelFont: ['Open Sans Italic'], labelSize: 14,
+      photo: '#ffffff', photoStroke: '#ff5a3c', anchorBg: '#ffffff', anchorFg: '#14202a', port: '#ff5a3c', portStroke: '#ffffff' },
+    ship: { html: SHIP, mode: 'flip', anchor: 'bottom', offset: [0, 8] },
+    tagOffset: [34, -18],
+    onReady(A) {
+      chBounds = CHAPTERS.bounds(A.t0);
+      $('chap').innerHTML = CHAPTERS.list.map((c, k) => '<button data-k="' + k + '"><div class="bar"><i></i></div><div class="n">' + c.n + '</div></button>').join('');
+      document.querySelectorAll('#chap button').forEach((b) => { b.onclick = () => A.setT(chBounds[+b.dataset.k].from + 60); });
+    },
+    onRender(A, s) {
+      let k = chBounds.findIndex((b) => s.t < b.to); if (k < 0) k = chBounds.length - 1;
+      if (k !== chIdx) {
+        chIdx = k;
+        const nm = A.posAt(chBounds[k].to).d - A.posAt(chBounds[k].from).d;
+        $('chT').textContent = CHAPTERS.list[k].n;
+        $('chS').textContent = CHAPTERS.list[k].s;
+        $('chK').dataset.base = 'Kapitel ' + (k + 1) + ' von ' + chBounds.length + ' · ' + A.fmt(nm) + ' sm';
+        document.querySelectorAll('#chap button').forEach((b, j) => b.classList.toggle('on', j === k));
+      }
+      $('chK').textContent = $('chK').dataset.base + ' · Tag ' + s.day;
+      document.querySelectorAll('#chap .bar i').forEach((i, j) => {
+        const b = chBounds[j]; i.style.width = (Math.max(0, Math.min(1, (s.t - b.from) / (b.to - b.from))) * 100) + '%';
+      });
+      $('sPos').textContent = A.fmt(-s.p.lat, 2) + '°S ' + A.fmt(-s.p.lon, 2) + '°W';
+      const ph = A.photos; if (!ph.length) return;
+      let cur = -1; ph.forEach((p, j) => { if (p.s <= s.t + 60) cur = j; });
+      if (cur !== lastStripK || s.force) {
+        lastStripK = cur;
+        const strip = $('strip');
+        strip.querySelectorAll('button').forEach((b, j) => { b.classList.toggle('on', j === cur); b.classList.toggle('past', j < cur); });
+        const el = strip.children[Math.max(0, cur)];
+        if (el) strip.scrollLeft = el.offsetLeft - strip.clientWidth / 2 + el.offsetWidth / 2;
+      }
+    },
+    onPhotos(A, ph) {
+      const strip = $('strip');
+      strip.innerHTML = ph.map((p) => '<button title="' + (p.title ? p.title + ' · ' : '') + A.fmtDate(A.t0 + p.s * 1000, false) + ' ' + A.fmtTime(A.t0 + p.s * 1000) + '"><img loading="lazy" src="' + p.m + '" alt="' + (p.title || 'Foto') + '"></button>').join('');
+      strip.querySelectorAll('button').forEach((b, j) => { b.onclick = () => A.openLb(j); });
+      lastStripK = -2;
+      A.refresh();
+    },
+    tagHtml(A, o) {
+      return '<span class="day">Tag ' + o.day + '</span>' + (o.wx ? '<b>' + A.fmt(o.wx.temp) + '°</b> · ' + Math.round(o.wx.wind) + ' kn ' + A.compass(o.wx.dir) : '<b>' + A.fmt(o.sog, 1) + '</b> kn');
+    }
+  };
+})();
+</script>
+<script src="assets/core.js?v=13"></script>
+<script src="assets/switcher.js?v=10"></script>
+</body>
+</html>

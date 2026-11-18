@@ -1,0 +1,17 @@
+[
+  {"name": "Ushuaia", "sub": "Start · Club Náutico AFASyN", "lat": -54.811, "lon": -68.312, "from": "2020-02-03T17:03:52Z", "to": "2020-02-03T17:03:52Z", "type": "port"},
+  {"name": "Deception Island", "sub": "Baily Head · Zügelpinguine", "lat": -62.957, "lon": -60.494, "from": "2020-02-08T15:53:45Z", "to": "2020-02-09T12:25:40Z"},
+  {"name": "Deception Island", "sub": "Whalers Bay · Station Hektor", "lat": -62.987, "lon": -60.564, "from": "2020-02-09T13:22:30Z", "to": "2020-02-09T19:14:40Z"},
+  {"name": "Enterprise Island", "sub": "Foyn Harbour", "lat": -64.545, "lon": -61.992, "from": "2020-02-10T13:26:39Z", "to": "2020-02-12T11:58:57Z"},
+  {"name": "Cuverville Island", "sub": "Eselspinguine", "lat": -64.678, "lon": -62.633, "from": "2020-02-12T15:58:43Z", "to": "2020-02-13T11:59:37Z"},
+  {"name": "Paradise Bay", "sub": "Brown Station", "lat": -64.897, "lon": -62.874, "from": "2020-02-13T15:16:34Z", "to": "2020-02-14T12:11:31Z"},
+  {"name": "Pléneau Island", "sub": "südlich des Lemaire-Kanals", "lat": -65.098, "lon": -64.056, "from": "2020-02-14T18:30:07Z", "to": "2020-02-15T11:54:17Z"},
+  {"name": "Vernadsky", "sub": "ukrainische Station · südlichster Punkt", "lat": -65.245, "lon": -64.257, "from": "2020-02-15T13:57:00Z", "to": "2020-02-16T13:43:30Z"},
+  {"name": "Yalour Islands", "sub": "Adéliepinguine", "lat": -65.229, "lon": -64.149, "from": "2020-02-16T15:42:10Z", "to": "2020-02-16T18:47:42Z"},
+  {"name": "Port Charcot", "sub": "Booth Island", "lat": -65.074, "lon": -64.036, "from": "2020-02-16T20:35:28Z", "to": "2020-02-18T19:17:02Z"},
+  {"name": "Arthur Harbour", "sub": "bei Palmer Station", "lat": -64.768, "lon": -64.072, "from": "2020-02-18T23:23:57Z", "to": "2020-02-19T15:34:46Z"},
+  {"name": "Port Lockroy", "sub": "Goudier Island", "lat": -64.823, "lon": -63.498, "from": "2020-02-19T18:46:59Z", "to": "2020-02-20T17:18:27Z"},
+  {"name": "Melchior Islands", "sub": "Dallmann-Bucht", "lat": -64.318, "lon": -62.920, "from": "2020-02-21T00:26:11Z", "to": "2020-02-22T12:38:46Z"},
+  {"name": "Harberton", "sub": "Beagle-Kanal", "lat": -54.888, "lon": -67.320, "from": "2020-02-27T03:51:21Z", "to": "2020-02-28T07:03:47Z"},
+  {"name": "Ushuaia", "sub": "Ziel", "lat": -54.811, "lon": -68.312, "from": "2020-02-28T15:53:38Z", "to": "2020-02-28T15:53:38Z", "type": "port"}
+]

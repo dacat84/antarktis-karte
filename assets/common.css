@@ -1,0 +1,25 @@
+/* Gemeinsame Bausteine aller Designs */
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+#map{position:fixed}
+.lb{position:fixed;inset:0;background:rgba(6,10,14,.94);z-index:10000;display:flex;align-items:center;justify-content:center}
+.lb[hidden]{display:none}
+.lb figure{margin:0;max-width:88vw;max-height:90vh;display:flex;flex-direction:column;align-items:center}
+.lb img{max-width:88vw;max-height:82vh;border-radius:4px}
+.lb figcaption{margin-top:12px;font:15px system-ui,sans-serif;color:#c4cdd4;display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;justify-content:center}
+.lb figcaption b{color:#fff}.lb figcaption a{color:#c4cdd4}
+.lb-x{position:absolute;top:14px;right:22px;font-size:38px;background:none;border:0;color:#fff;cursor:pointer}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);font-size:54px;background:none;border:0;color:#fff;cursor:pointer;padding:20px;opacity:.7}
+.lb-nav:hover{opacity:1}.lb-nav.l{left:6px}.lb-nav.r{right:6px}
+.maplibregl-ctrl button.follow{font-size:20px;line-height:1;color:#666}
+.maplibregl-ctrl button.follow.on{color:#e0452f}
+.shipm{pointer-events:none}
+.shipm .flip{transition:transform .4s}
+.shipm.west .flip{transform:scaleX(-1)}
+.shiptag{pointer-events:none}
+.wx.off{display:none}
+.thumbs button{all:unset;cursor:pointer;position:relative;overflow:hidden;display:block}
+.thumbs img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.thumbs button:hover img{transform:scale(1.05)}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{cursor:pointer}
