@@ -545,7 +545,7 @@
     let i = -1; photos.forEach((p, k) => { if (p.s <= t + 60) i = k; });
     const n = TH.thumbCount || 6;
     const sel = i < 0 ? photos.slice(0, n) : photos.slice(Math.max(0, i - n + 1), i + 1).reverse();
-    const key = sel.map((p) => p.id).join();
+    const key = sel.map((p) => p.k).join();
     if (key === lastThumbKey && !force) return;
     lastThumbKey = key;
     box.innerHTML = sel.map((p) =>
